@@ -1,0 +1,20 @@
+# Gradle files
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+HELP.md
+
+# IDE-specific files
+.classpath
+.project
+.settings/
+bin/
+
+# Gradle Wrapper files
+gradlew
+gradlew.bat
+
+# Build outputs
+**/build/
+!src/**/build/
