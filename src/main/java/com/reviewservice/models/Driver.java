@@ -1,7 +1,9 @@
 package com.reviewservice.models;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,13 +21,14 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Driver extends BaseModel{
+public class Driver extends BaseModel {
 
-    private String name;
+	private String name;
 
-    @Column(nullable = false, unique = true)
-    private String licenseNumber;
+	@Column(nullable = false, unique = true)
+	private String licenseNumber;
 
-    @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
-    private List<Booking> bookings = new ArrayList<>();
+	@OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
+	@Fetch(FetchMode.SUBSELECT)
+	private List<Booking> bookings;
 }
