@@ -21,7 +21,7 @@ import lombok.Setter;
 @MappedSuperclass
 @Getter
 @Setter
-public class BaseModel {
+public abstract class BaseModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected Long id;
