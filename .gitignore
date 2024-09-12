@@ -38,3 +38,11 @@ gradle-app.setting
 
 # General
 HELP.md
+
+# Other
+*.log
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+*.idea/
