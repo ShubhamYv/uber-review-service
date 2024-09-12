@@ -1,18 +1,13 @@
 package com.reviewservice.controller;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.reviewservice.models.Review;
 import com.reviewservice.services.ReviewService;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/reviews")
@@ -22,6 +17,12 @@ public class ReviewController {
 
 	public ReviewController(ReviewService reviewService) {
 		this.reviewService = reviewService;
+	}
+
+	@PostMapping
+	public ResponseEntity<Review> publishReview(@RequestBody Review request) {
+		Review review = this.reviewService.publishReview(request);
+		return new ResponseEntity<>(review, HttpStatus.CREATED);
 	}
 
 	@GetMapping
@@ -52,4 +53,13 @@ public class ReviewController {
 		}
 	}
 
+	@PutMapping("/{reviewId}")
+	public ResponseEntity<?> updateReview(@PathVariable Long reviewId, @RequestBody Review request) {
+		try {
+			Review review = this.reviewService.updateReview(reviewId, request);
+			return new ResponseEntity<>(review, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

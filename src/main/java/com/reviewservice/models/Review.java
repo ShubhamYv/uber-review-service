@@ -19,12 +19,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Review extends BaseModel{
+public class Review extends BaseModel {
 
 	@Column(nullable = false)
 	private String content;
 
 	@Column(nullable = false)
-	private double rating;
+	private Double rating;
 
 }
