@@ -7,7 +7,6 @@ import org.hibernate.annotations.FetchMode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +29,7 @@ public class Driver extends BaseModel {
 
 	private String phoneNumber;
 
-	@OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "driver")
 	@Fetch(FetchMode.SUBSELECT)
 	private List<Booking> bookings;
 }
