@@ -11,6 +11,7 @@ import com.reviewservice.repositories.ReviewRepository;
 import com.reviewservice.services.ReviewService;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -21,6 +22,7 @@ public class ReviewServiceImpl implements ReviewService {
 		this.reviewRepository = reviewRepository;
 	}
 
+	@Override
 	public Optional<Review> findReviewById(Long id) throws EntityNotFoundException {
 		Optional<Review> review;
 		try {
@@ -55,6 +57,7 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
+	@Transactional
 	public Review publishReview(Review review) {
 		return this.reviewRepository.save(review);
 	}

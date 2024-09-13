@@ -1,29 +1,55 @@
 package com.reviewservice.controller;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.reviewservice.adapters.CreateReviewDtoToReviewAdapter;
+import com.reviewservice.dtos.CreateReviewDto;
+import com.reviewservice.dtos.ReviewDto;
 import com.reviewservice.models.Review;
 import com.reviewservice.services.ReviewService;
-
-import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/reviews")
 public class ReviewController {
 
 	private ReviewService reviewService;
-
-	public ReviewController(ReviewService reviewService) {
-		this.reviewService = reviewService;
-	}
+    private CreateReviewDtoToReviewAdapter createReviewDtoToReviewAdapter;
+    
+    public ReviewController(ReviewService reviewService, CreateReviewDtoToReviewAdapter createReviewDtoToReviewAdapter){
+        this.reviewService = reviewService;
+        this.createReviewDtoToReviewAdapter = createReviewDtoToReviewAdapter;
+    }
 
 	@PostMapping
-	public ResponseEntity<Review> publishReview(@RequestBody Review request) {
-		Review review = this.reviewService.publishReview(request);
-		return new ResponseEntity<>(review, HttpStatus.CREATED);
-	}
+    public ResponseEntity<?> publishReview(@Validated @RequestBody CreateReviewDto request) {
+        Review incomingReview  = this.createReviewDtoToReviewAdapter.convertDto(request);
+        if(incomingReview == null) {
+            return new ResponseEntity<>("Invalid arguments", HttpStatus.BAD_REQUEST);
+        }
+        Review review = this.reviewService.publishReview(incomingReview);
+        ReviewDto response = ReviewDto.builder()
+                .id(review.getId())
+                .content(review.getContent())
+                .booking(review.getBooking().getId())
+                .rating(review.getRating())
+                .createdAt(review.getCreatedAt())
+                .updatedAt(review.getUpdatedAt())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 
 	@GetMapping
 	public ResponseEntity<List<Review>> getAllReviews() {
