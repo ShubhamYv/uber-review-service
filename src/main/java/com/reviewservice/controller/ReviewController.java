@@ -31,7 +31,9 @@ public class ReviewController {
     private final ReviewRequestMapper reviewRequestMapper;
     private final ReviewMapper reviewMapper;
 
-    public ReviewController(ReviewService reviewService, ReviewRequestMapper reviewRequestMapper, ReviewMapper reviewMapper) {
+    public ReviewController(ReviewService reviewService, 
+                            ReviewRequestMapper reviewRequestMapper, 
+                            ReviewMapper reviewMapper) {
         this.reviewService = reviewService;
         this.reviewRequestMapper = reviewRequestMapper;
         this.reviewMapper = reviewMapper;
@@ -42,7 +44,7 @@ public class ReviewController {
         CreateReviewDto requestDto = reviewRequestMapper.pojoToDto(request);
         ReviewDto reviewDto = reviewService.publishReview(requestDto);
         ReviewReqRes response = reviewMapper.dtoToPojo(reviewDto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
@@ -51,29 +53,30 @@ public class ReviewController {
         List<ReviewReqRes> response = reviewDtos.stream()
                 .map(reviewMapper::dtoToPojo)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewReqRes> findReviewById(@PathVariable Long reviewId) {
         ReviewDto reviewDto = reviewService.findReviewById(reviewId);
         ReviewReqRes response = reviewMapper.dtoToPojo(reviewDto);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<String> deleteReviewById(@PathVariable Long reviewId) {
         boolean isDeleted = reviewService.deleteReviewById(reviewId);
         if (!isDeleted) {
-            return new ResponseEntity<>("Unable to delete Review", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Unable to delete Review");
         }
-        return new ResponseEntity<>("Review deleted successfully", HttpStatus.OK);
+        return ResponseEntity.ok("Review deleted successfully");
     }
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewReqRes> updateReview(@PathVariable Long reviewId, @RequestBody ReviewReqRes request) {
         ReviewDto updatedDto = reviewService.updateReview(reviewId, reviewMapper.pojoToDto(request));
         ReviewReqRes response = reviewMapper.dtoToPojo(updatedDto);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 }

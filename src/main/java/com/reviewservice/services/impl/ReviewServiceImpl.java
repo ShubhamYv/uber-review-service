@@ -3,17 +3,19 @@ package com.reviewservice.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.reviewservice.constants.ErrorCodeEnum;
 import com.reviewservice.dtos.CreateReviewDto;
 import com.reviewservice.dtos.ReviewDto;
+import com.reviewservice.exception.UberReviewServiceException;
 import com.reviewservice.models.Review;
 import com.reviewservice.repositories.ReviewRepository;
 import com.reviewservice.services.ReviewService;
 import com.reviewservice.utils.ReviewMapper;
 import com.reviewservice.utils.ReviewRequestMapper;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -30,9 +32,21 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewDto findReviewById(Long id) throws EntityNotFoundException {
+    public ReviewDto findReviewById(Long id) {
+        if (id == null) {
+            throw new UberReviewServiceException(
+                ErrorCodeEnum.NULL_REQUEST_DTO.getErrorMessage(),
+                ErrorCodeEnum.NULL_REQUEST_DTO.getErrorCode(),
+                HttpStatus.BAD_REQUEST
+            );
+        }
+
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Review with id " + id + " not found"));
+                .orElseThrow(() -> new UberReviewServiceException(
+                    ErrorCodeEnum.REVIEW_NOT_FOUND.getErrorMessage(),
+                    ErrorCodeEnum.REVIEW_NOT_FOUND.getErrorCode(),
+                    HttpStatus.NOT_FOUND
+                ));
         return reviewMapper.modelToDto(review);
     }
 
@@ -46,26 +60,74 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public boolean deleteReviewById(Long id) {
-        if (!reviewRepository.existsById(id)) {
-            return false;
+        if (id == null) {
+            throw new UberReviewServiceException(
+                ErrorCodeEnum.NULL_REQUEST_DTO.getErrorMessage(),
+                ErrorCodeEnum.NULL_REQUEST_DTO.getErrorCode(),
+                HttpStatus.BAD_REQUEST
+            );
         }
 
-        reviewRepository.deleteById(id);
-        return true; 
+        if (!reviewRepository.existsById(id)) {
+            throw new UberReviewServiceException(
+                ErrorCodeEnum.REVIEW_NOT_FOUND.getErrorMessage(),
+                ErrorCodeEnum.REVIEW_NOT_FOUND.getErrorCode(),
+                HttpStatus.NOT_FOUND
+            );
+        }
+
+        try {
+            reviewRepository.deleteById(id);
+            return true; 
+        } catch (Exception e) {
+            throw new UberReviewServiceException(
+                ErrorCodeEnum.DELETE_FAILED.getErrorMessage(),
+                ErrorCodeEnum.DELETE_FAILED.getErrorCode(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     @Override
     @Transactional
     public ReviewDto publishReview(CreateReviewDto incomingReview) {
-        Review review = requestMapper.dtoToModel(incomingReview);
-        Review savedReview = reviewRepository.save(review);
-        return reviewMapper.modelToDto(savedReview);
+        if (incomingReview == null) {
+            throw new UberReviewServiceException(
+                ErrorCodeEnum.NULL_REQUEST_DTO.getErrorMessage(),
+                ErrorCodeEnum.NULL_REQUEST_DTO.getErrorCode(),
+                HttpStatus.BAD_REQUEST
+            );
+        }
+
+        try {
+            Review review = requestMapper.dtoToModel(incomingReview);
+            Review savedReview = reviewRepository.save(review);
+            return reviewMapper.modelToDto(savedReview);
+        } catch (Exception e) {
+            throw new UberReviewServiceException(
+                ErrorCodeEnum.PUBLISH_FAILED.getErrorMessage(),
+                ErrorCodeEnum.PUBLISH_FAILED.getErrorCode(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     @Override
     public ReviewDto updateReview(Long id, ReviewDto newReviewData) {
+        if (id == null || newReviewData == null) {
+            throw new UberReviewServiceException(
+                ErrorCodeEnum.NULL_REQUEST_DTO.getErrorMessage(),
+                ErrorCodeEnum.NULL_REQUEST_DTO.getErrorCode(),
+                HttpStatus.BAD_REQUEST
+            );
+        }
+
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Review with id " + id + " not found"));
+                .orElseThrow(() -> new UberReviewServiceException(
+                    ErrorCodeEnum.REVIEW_NOT_FOUND.getErrorMessage(),
+                    ErrorCodeEnum.REVIEW_NOT_FOUND.getErrorCode(),
+                    HttpStatus.NOT_FOUND
+                ));
 
         if (newReviewData.getRating() != null) {
             review.setRating(newReviewData.getRating());
@@ -74,7 +136,15 @@ public class ReviewServiceImpl implements ReviewService {
             review.setContent(newReviewData.getContent());
         }
 
-        Review updatedReview = reviewRepository.save(review);
-        return reviewMapper.modelToDto(updatedReview);
+        try {
+            Review updatedReview = reviewRepository.save(review);
+            return reviewMapper.modelToDto(updatedReview);
+        } catch (Exception e) {
+            throw new UberReviewServiceException(
+                ErrorCodeEnum.UPDATE_FAILED.getErrorMessage(),
+                ErrorCodeEnum.UPDATE_FAILED.getErrorCode(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }
