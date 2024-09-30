@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.entityservice.models.Review;
 import com.reviewservice.constants.ErrorCodeEnum;
 import com.reviewservice.dtos.CreateReviewDto;
 import com.reviewservice.dtos.ReviewDto;
 import com.reviewservice.exception.UberReviewServiceException;
-import com.reviewservice.models.Review;
 import com.reviewservice.repositories.ReviewRepository;
 import com.reviewservice.services.ReviewService;
 import com.reviewservice.utils.ReviewMapper;

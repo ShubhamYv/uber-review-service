@@ -3,9 +3,9 @@ package com.reviewservice.utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.entityservice.models.Booking;
+import com.entityservice.models.Review;
 import com.reviewservice.dtos.CreateReviewDto;
-import com.reviewservice.models.Booking;
-import com.reviewservice.models.Review;
 import com.reviewservice.pojo.CreateReviewRequest;
 import com.reviewservice.pojo.ReviewReqRes;
 import com.reviewservice.repositories.BookingRepository;
