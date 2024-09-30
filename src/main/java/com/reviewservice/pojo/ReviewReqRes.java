@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ReviewResponse {
+public class ReviewReqRes {
 	private Long id;
 	private String content;
 	private Double rating;

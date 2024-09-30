@@ -1,23 +1,26 @@
 package com.reviewservice.utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.reviewservice.dtos.ReviewDto;
 import com.reviewservice.models.Booking;
 import com.reviewservice.models.Review;
+import com.reviewservice.pojo.ReviewReqRes;
 import com.reviewservice.repositories.BookingRepository;
 
 @Component
 public class ReviewMapper {
 
-    private final BookingRepository bookingRepository;
+	@Autowired
+    private BookingRepository bookingRepository;
 
     public ReviewMapper(BookingRepository bookingRepository) {
         this.bookingRepository = bookingRepository;
     }
 
     // Method to convert Review model to ReviewDto
-    public static ReviewDto modelToDto(Review review) {
+    public ReviewDto modelToDto(Review review) {
         if (review == null) {
             return null;
         }
@@ -53,5 +56,37 @@ public class ReviewMapper {
         }
         
         return review;
+    }
+
+    // Method to convert ReviewDto to ReviewReqRes (POJO)
+    public ReviewReqRes dtoToPojo(ReviewDto reviewDto) {
+        if (reviewDto == null) {
+            return null;
+        }
+
+        return ReviewReqRes.builder()
+                .id(reviewDto.getId())
+                .content(reviewDto.getContent())
+                .rating(reviewDto.getRating())
+                .booking(reviewDto.getBooking())
+                .createdAt(reviewDto.getCreatedAt())
+                .updatedAt(reviewDto.getUpdatedAt())
+                .build();
+    }
+
+    // Method to convert ReviewReqRes (POJO) to ReviewDto
+    public ReviewDto pojoToDto(ReviewReqRes reviewReqRes) {
+        if (reviewReqRes == null) {
+            return null;
+        }
+
+        return ReviewDto.builder()
+                .id(reviewReqRes.getId())
+                .content(reviewReqRes.getContent())
+                .rating(reviewReqRes.getRating())
+                .booking(reviewReqRes.getBooking())
+                .createdAt(reviewReqRes.getCreatedAt())
+                .updatedAt(reviewReqRes.getUpdatedAt())
+                .build();
     }
 }

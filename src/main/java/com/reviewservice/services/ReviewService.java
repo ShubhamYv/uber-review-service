@@ -1,19 +1,19 @@
 package com.reviewservice.services;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.reviewservice.models.Review;
+import com.reviewservice.dtos.CreateReviewDto;
+import com.reviewservice.dtos.ReviewDto;
 
 public interface ReviewService {
 
-	public Optional<Review> findReviewById(Long id);
+    ReviewDto findReviewById(Long id);
 
-	public List<Review> findAllReviews();
+    List<ReviewDto> findAllReviews();
 
-	public boolean deleteReviewById(Long id);
-	
-    public Review publishReview(Review review);
+    boolean deleteReviewById(Long id);
+    
+    ReviewDto publishReview(CreateReviewDto incomingReview);
 
-    public Review updateReview(Long id, Review review);
+    ReviewDto updateReview(Long id, ReviewDto reviewDto);
 }

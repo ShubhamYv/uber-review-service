@@ -1,25 +1,36 @@
 package com.reviewservice.utils;
 
-import com.reviewservice.dtos.CreateReviewDto;
-import com.reviewservice.pojo.CreateReviewRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import com.reviewservice.dtos.CreateReviewDto;
+import com.reviewservice.models.Booking;
+import com.reviewservice.models.Review;
+import com.reviewservice.pojo.CreateReviewRequest;
+import com.reviewservice.pojo.ReviewReqRes;
+import com.reviewservice.repositories.BookingRepository;
+
+@Component
 public class ReviewRequestMapper {
+	
+	@Autowired
+	private BookingRepository bookingRepository;
 
     // Method to convert CreateReviewDto to CreateReviewRequest
-    public static CreateReviewRequest dtoToPojo(CreateReviewDto createReviewDto) {
+    public ReviewReqRes dtoToPojo(CreateReviewDto createReviewDto) {
         if (createReviewDto == null) {
             return null;
         }
 
-        return CreateReviewRequest.builder()
+        return ReviewReqRes.builder()
                 .content(createReviewDto.getContent())
                 .rating(createReviewDto.getRating())
-                .bookingId(createReviewDto.getBookingId())
+                .booking(createReviewDto.getBookingId())
                 .build();
     }
 
     // Method to convert CreateReviewRequest to CreateReviewDto
-    public static CreateReviewDto pojoToDto(CreateReviewRequest createReviewRequest) {
+    public CreateReviewDto pojoToDto(CreateReviewRequest createReviewRequest) {
         if (createReviewRequest == null) {
             return null;
         }
@@ -30,4 +41,25 @@ public class ReviewRequestMapper {
                 .bookingId(createReviewRequest.getBookingId())
                 .build();
     }
+
+ // Method to convert CreateReviewDto to Review Model
+    public Review dtoToModel(CreateReviewDto createReviewDto) {
+        if (createReviewDto == null) {
+            return null;
+        }
+
+        Review review = Review.builder()
+                .content(createReviewDto.getContent())
+                .rating(createReviewDto.getRating())
+                .build();
+
+        if (createReviewDto.getBookingId() != null) {
+            Booking booking = bookingRepository.findById(createReviewDto.getBookingId())
+                    .orElse(null); 
+            review.setBooking(booking);
+        }
+
+        return review;
+    }
+    
 }
