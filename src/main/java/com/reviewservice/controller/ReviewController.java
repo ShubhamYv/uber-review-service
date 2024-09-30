@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.reviewservice.adapters.CreateReviewDtoToReviewAdapter;
 import com.reviewservice.dtos.CreateReviewDto;
 import com.reviewservice.dtos.ReviewDto;
 import com.reviewservice.models.Review;
@@ -26,16 +25,14 @@ import com.reviewservice.services.ReviewService;
 public class ReviewController {
 
 	private ReviewService reviewService;
-    private CreateReviewDtoToReviewAdapter createReviewDtoToReviewAdapter;
     
-    public ReviewController(ReviewService reviewService, CreateReviewDtoToReviewAdapter createReviewDtoToReviewAdapter){
+    public ReviewController(ReviewService reviewService){
         this.reviewService = reviewService;
-        this.createReviewDtoToReviewAdapter = createReviewDtoToReviewAdapter;
     }
 
 	@PostMapping
     public ResponseEntity<?> publishReview(@Validated @RequestBody CreateReviewDto request) {
-        Review incomingReview  = this.createReviewDtoToReviewAdapter.convertDto(request);
+        Review incomingReview  =null;
         if(incomingReview == null) {
             return new ResponseEntity<>("Invalid arguments", HttpStatus.BAD_REQUEST);
         }

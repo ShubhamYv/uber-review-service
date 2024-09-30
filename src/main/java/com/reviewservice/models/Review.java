@@ -34,4 +34,13 @@ public class Review extends BaseModel {
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	private Booking booking;
+	
+	
+    public static ReviewBuilder builder() {
+        return new ReviewBuilder();
+    }
+
+    public static class ReviewBuilder extends BaseModel.BaseModelBuilder<ReviewBuilder> {
+        
+    }
 }

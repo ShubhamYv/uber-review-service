@@ -35,4 +35,27 @@ public abstract class BaseModel {
 	@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate
 	protected Date updatedAt;
+
+	// Create a builder for BaseModel
+	@SuppressWarnings("unchecked")
+	public abstract static class BaseModelBuilder<T extends BaseModelBuilder<T>> {
+		protected Long id;
+		protected Date createdAt;
+		protected Date updatedAt;
+
+		public T id(Long id) {
+			this.id = id;
+			return (T) this;
+		}
+
+		public T createdAt(Date createdAt) {
+			this.createdAt = createdAt;
+			return (T) this;
+		}
+
+		public T updatedAt(Date updatedAt) {
+			this.updatedAt = updatedAt;
+			return (T) this;
+		}
+	}
 }
