@@ -42,13 +42,14 @@ public class ReviewMapper {
         }
 
         Review review = Review.builder()
-                .id(reviewDto.getId())
                 .content(reviewDto.getContent())
                 .rating(reviewDto.getRating())
-                .createdAt(reviewDto.getCreatedAt())
-                .updatedAt(reviewDto.getUpdatedAt())
                 .build();
-
+        
+        review.setId(reviewDto.getId());
+        review.setCreatedAt(reviewDto.getCreatedAt());
+        review.setUpdatedAt(reviewDto.getUpdatedAt());
+        
         if (reviewDto.getBooking() != null) {
             Booking booking = bookingRepository.findById(reviewDto.getBooking())
                     .orElse(null); 
